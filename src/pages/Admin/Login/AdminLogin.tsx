@@ -1,22 +1,25 @@
 import React from "react";
-import { useForm, SubmitHandler } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
-import { useLoginMutation } from "../../redux/features/auth/authApi";
-import { useAppDispatch } from "../../redux/hook";
-import { setAccessToken, setUser } from "../../redux/features/auth/authSlice";
+import { useAdminLoginMutation } from "../../../redux/features/auth/authApi";
+import { useAppDispatch } from "../../../redux/hook";
 import jwt_decode from "jwt-decode";
-import { errorNotify } from "../../lib/notifications";
+import {
+  setAccessToken,
+  setUser,
+} from "../../../redux/features/auth/authSlice";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { errorNotify } from "../../../lib/notifications";
 
 type Inputs = {
   email: string;
   password: string;
 };
 
-export default function Login() {
+export default function AdminLogin() {
   const navigate = useNavigate();
 
   // ! set the user info to redux storage. The setAuth function need to call into login handler
-  const [loginMutation] = useLoginMutation();
+  const [adminLoginMutatin] = useAdminLoginMutation();
   const dispatch = useAppDispatch();
 
   const setAuth = (accessToken: string) => {
@@ -39,7 +42,7 @@ export default function Login() {
   } = useForm<Inputs>();
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
-    const response = await loginMutation(data);
+    const response = await adminLoginMutatin(data);
 
     if ("error" in response) {
       errorNotify(response.error.data.message);

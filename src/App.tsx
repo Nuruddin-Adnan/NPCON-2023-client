@@ -1,36 +1,23 @@
-import React from "react";
+import React, { useEffect } from "react";
 import MainLayout from "./layouts/MainLaout";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-
-export const successNotify = (message: string) =>
-  toast.success(message, {
-    position: "top-right",
-    autoClose: 3000,
-    hideProgressBar: false,
-    closeOnClick: true,
-    pauseOnHover: true,
-    draggable: true,
-    progress: undefined,
-    theme: "colored",
-  });
-export const errorNotify = (message: string) =>
-  toast.error(message, {
-    position: "top-right",
-    autoClose: 3000,
-    hideProgressBar: false,
-    closeOnClick: true,
-    pauseOnHover: true,
-    draggable: true,
-    progress: undefined,
-    theme: "colored",
-  });
+import { useAppDispatch } from "./redux/hook";
+import { setAccessToken, setUser } from "./redux/features/auth/authSlice";
 
 function App() {
+  // *** set the user data to redux storage from session storage when load application. if the window close the session data remove. But it prevent the reload problem
+  const dispatch = useAppDispatch();
+  const authData = sessionStorage.getItem("authData");
+  useEffect(() => {
+    if (authData) {
+      const authParseData = JSON.parse(authData);
+      dispatch(setAccessToken(authParseData.accessToken));
+      dispatch(setUser(authParseData.user));
+    }
+  }, [dispatch, authData]);
+
   return (
     <>
       <MainLayout />
-      <ToastContainer />
     </>
   );
 }

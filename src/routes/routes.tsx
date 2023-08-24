@@ -6,6 +6,10 @@ import Login from "../pages/Login/Login";
 import Signup from "../pages/Signup/Signup";
 import NotFound from "../pages/NotFound/NotFound";
 import Registration from "../pages/Registration/Registration";
+import MyEntries from "../pages/MyEntries/MyEntries";
+import PrivateRoute from "./PrivateRoute";
+import AdminLogin from "../pages/Admin/Login/AdminLogin";
+import ShowToAllRegistrations from "../pages/ShowToAllRegistrations/ShowToAllRegistrations";
 
 const routes = createBrowserRouter([
   {
@@ -18,13 +22,37 @@ const routes = createBrowserRouter([
       },
       {
         path: "/registration",
-        element: <Registration />,
+        element: (
+          <PrivateRoute>
+            <Registration />
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "/my-entries",
+        element: (
+          <PrivateRoute>
+            <MyEntries />
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "/show-to-all",
+        element: (
+          <PrivateRoute>
+            <ShowToAllRegistrations />
+          </PrivateRoute>
+        ),
       },
     ],
   },
   {
     path: "/login",
     element: <Login />,
+  },
+  {
+    path: "/admin/login",
+    element: <AdminLogin />,
   },
   {
     path: "/signup",

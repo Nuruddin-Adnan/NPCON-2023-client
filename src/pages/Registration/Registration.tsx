@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { errorNotify, successNotify } from "../../App";
+import { errorNotify, successNotify } from "../../lib/notifications";
+import { useCreateRegistrationMutation } from "../../redux/features/registration/registrationApi";
 
 type Inputs = {
   name: string;
@@ -22,6 +23,7 @@ type Inputs = {
 
 const Registration = () => {
   const [bkashNumberField, setBkashNumberField] = useState<boolean>(false);
+  const [createRegistration] = useCreateRegistrationMutation();
 
   const {
     register,
@@ -30,9 +32,11 @@ const Registration = () => {
     formState: { errors },
   } = useForm<Inputs>();
 
-  const onSubmit: SubmitHandler<Inputs> = (data) => {
+  const onSubmit: SubmitHandler<Inputs> = async (data) => {
     if (!data.paymentMethod) {
       errorNotify("Payment method is missing!");
+    } else if (data.paymentMethod === "bkash" && !data.bkashNumber) {
+      errorNotify("Please provide a valid bkash number");
     } else {
       const purpose = [];
       if (data.conference) {
@@ -50,11 +54,14 @@ const Registration = () => {
       // make the amount filed number
       data.amount = parseInt(data.amount);
 
-      // ! Need to send database
-      console.log(data);
+      const response = await createRegistration(data);
 
-      successNotify("Registration done successfully!");
-      // reset();
+      if ("error" in response) {
+        errorNotify(response.error.data.message);
+      } else {
+        successNotify(response.data.message);
+        reset();
+      }
     }
   };
 

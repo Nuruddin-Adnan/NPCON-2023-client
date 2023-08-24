@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useSignupMutation } from "../../redux/features/auth/authApi";
+import { errorNotify, successNotify } from "../../lib/notifications";
 type Inputs = {
   name?: {
     firstName: string | undefined;
@@ -18,6 +20,9 @@ type Inputs = {
 
 export default function Signup() {
   const [passConfirm, setPassConfirm] = useState<boolean>(true);
+  const navigate = useNavigate();
+  const [signMutation] = useSignupMutation();
+
   const {
     register,
     handleSubmit,
@@ -25,7 +30,7 @@ export default function Signup() {
     formState: { errors },
   } = useForm<Inputs>();
 
-  const onSubmit: SubmitHandler<Inputs> = (data) => {
+  const onSubmit: SubmitHandler<Inputs> = async (data) => {
     if (data.password !== data.confirmPass) {
       setPassConfirm(false);
     } else {
@@ -37,8 +42,16 @@ export default function Signup() {
       };
       delete data.firstName;
       delete data.lastName;
-      console.log(data);
-      // reset();
+
+      const response = await signMutation(data);
+
+      if ("error" in response) {
+        errorNotify(response.error.data.message);
+      } else {
+        successNotify("Signup successfully"!);
+        reset();
+        navigate("/login");
+      }
     }
   };
 

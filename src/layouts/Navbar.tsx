@@ -1,11 +1,22 @@
-import React from "react";
+// import React from "react";
 import { Link, NavLink } from "react-router-dom";
 import { MdOutlineLogout } from "react-icons/md";
 import { useAppDispatch, useAppSelector } from "../redux/hook";
 import { logout } from "../redux/features/auth/authSlice";
 
+type User = {
+  _id: string;
+  role: string;
+  emailAddress: string;
+};
+
+type AuthState = {
+  user: User | null;
+  accessToken: string | null;
+};
+
 export default function Navbar() {
-  const { user } = useAppSelector((state) => state.auth);
+  const { user } = useAppSelector((state: { auth: AuthState }) => state.auth);
   const dispatch = useAppDispatch();
 
   const handleLogout = () => {

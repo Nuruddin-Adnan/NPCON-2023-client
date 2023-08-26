@@ -1,4 +1,4 @@
-import React from "react";
+// import React from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { useLoginMutation } from "../../redux/features/auth/authApi";
@@ -42,7 +42,10 @@ export default function Login() {
     const response = await loginMutation(data);
 
     if ("error" in response) {
-      errorNotify(response.error.data.message);
+      if (response.error && "data" in response.error) {
+        const errorData = response.error.data as { message: string }; // Adjust the type accordingly
+        errorNotify(errorData.message);
+      }
     } else {
       const data = response.data.data;
       const accessToken = data.accessToken;

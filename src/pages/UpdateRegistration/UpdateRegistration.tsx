@@ -1,7 +1,11 @@
 import React, { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { errorNotify, successNotify } from "../../lib/notifications";
-import { useCreateRegistrationMutation } from "../../redux/features/registration/registrationApi";
+import {
+  useGetSingleRegistrationQuery,
+  useUpdateRegistrationMutation,
+} from "../../redux/features/registration/registrationApi";
+import { useParams } from "react-router-dom";
 
 type Inputs = {
   name: string;
@@ -9,7 +13,7 @@ type Inputs = {
   hospital: string;
   emailAddress?: string;
   phoneNumber?: string;
-  amount: number | number;
+  amount: number | string;
   purpose: string[];
   slideSeminar?: string;
   conference?: string;
@@ -21,9 +25,10 @@ type Inputs = {
   status?: string;
 };
 
-const Registration: React.FC = () => {
+const UpdateRegistration: React.FC = () => {
   const [bkashNumberField, setBkashNumberField] = useState<boolean>(false);
-  const [createRegistration] = useCreateRegistrationMutation();
+  const [updateRegistration] = useUpdateRegistrationMutation();
+  const { id } = useParams();
 
   const {
     register,
@@ -31,6 +36,22 @@ const Registration: React.FC = () => {
     reset,
     formState: { errors },
   } = useForm<Inputs>();
+
+  const {
+    data: singleData,
+    isLoading,
+    error,
+  } = useGetSingleRegistrationQuery(id, {
+    refetchOnMountOrArgChange: true,
+  });
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error:</div>;
+  }
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     if (!data.paymentMethod) {
@@ -45,6 +66,9 @@ const Registration: React.FC = () => {
       if (data.slideSeminar) {
         purpose.push(data.slideSeminar);
       }
+      if (data.paymentMethod !== "bkash") {
+        data.bkashNumber = "";
+      }
 
       delete data.conference;
       delete data.slideSeminar;
@@ -52,6 +76,8 @@ const Registration: React.FC = () => {
       data.purpose = purpose;
 
       // make the amount filed number
+      console.log(typeof data.amount);
+
       if (typeof data.amount === "string") {
         data.amount = parseInt(data.amount);
       }
@@ -59,7 +85,7 @@ const Registration: React.FC = () => {
       data.emailAddress = data.emailAddress!.trim();
       data.note = data.note!.trim();
 
-      const response = await createRegistration(data);
+      const response = await updateRegistration({ id, data });
 
       if ("error" in response) {
         if (response.error && "data" in response.error) {
@@ -101,6 +127,7 @@ const Registration: React.FC = () => {
                 <input
                   type="text"
                   className="md:py-3 md:px-4 py-2 px-3 block  w-full border border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400"
+                  defaultValue={singleData.data?.name}
                   {...register("name", {
                     required: "Name is required",
                     minLength: 3,
@@ -119,6 +146,7 @@ const Registration: React.FC = () => {
                   <input
                     type="text"
                     className="md:py-3 md:px-4 py-2 px-3 block  w-full border border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400"
+                    defaultValue={singleData.data?.designation}
                     {...register("designation")}
                   />
                 </div>
@@ -129,6 +157,7 @@ const Registration: React.FC = () => {
                   <input
                     type="text"
                     className="md:py-3 md:px-4 py-2 px-3 block  w-full border border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400"
+                    defaultValue={singleData.data?.hospital}
                     {...register("hospital")}
                   />
                 </div>
@@ -141,6 +170,7 @@ const Registration: React.FC = () => {
                   <input
                     type="email"
                     className="md:py-3 md:px-4 py-2 px-3 block  w-full border border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400"
+                    defaultValue={singleData.data?.emailAddress}
                     {...register("emailAddress")}
                   />
                 </div>
@@ -151,6 +181,7 @@ const Registration: React.FC = () => {
                   <input
                     type="text"
                     className="md:py-3 md:px-4 py-2 px-3 block  w-full border border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400"
+                    defaultValue={singleData.data?.phoneNumber}
                     {...register("phoneNumber")}
                   />
                 </div>
@@ -163,6 +194,7 @@ const Registration: React.FC = () => {
                   <input
                     type="number"
                     className="md:py-3 md:px-4 py-2 px-3 block  w-full border border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400"
+                    defaultValue={singleData.data?.amount}
                     {...register("amount", {
                       required: "Amount is required",
                     })}
@@ -183,7 +215,11 @@ const Registration: React.FC = () => {
                         className="shrink-0 mt-0.5 border-gray-200 rounded text-blue-600 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:checked:bg-blue-500 dark:checked:border-blue-500 dark:focus:ring-offset-gray-800"
                         id="conference"
                         defaultValue="conference"
-                        defaultChecked
+                        defaultChecked={
+                          singleData.data?.purpose[0] === "conference"
+                            ? true
+                            : false
+                        }
                         {...register("conference", {
                           required: "Conference is required",
                         })}
@@ -202,7 +238,12 @@ const Registration: React.FC = () => {
                         type="checkbox"
                         className="shrink-0 mt-0.5 border-gray-200 rounded text-blue-600 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:checked:bg-blue-500 dark:checked:border-blue-500 dark:focus:ring-offset-gray-800"
                         id="slideSeminar"
-                        defaultValue="slide seminar"
+                        value="slide seminar"
+                        defaultChecked={
+                          singleData.data?.purpose[1] === "slide seminar"
+                            ? true
+                            : false
+                        }
                         {...register("slideSeminar")}
                       />
                       <label
@@ -230,6 +271,9 @@ const Registration: React.FC = () => {
                     className="shrink-0 mt-0.5 border-gray-200 rounded-full text-blue-600 pointer-events-none focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:checked:bg-blue-500 dark:checked:border-blue-500 dark:focus:ring-offset-gray-800"
                     id="cash"
                     value="cash"
+                    defaultChecked={
+                      singleData.data?.paymentMethod === "cash" ? true : false
+                    }
                     {...register("paymentMethod")}
                   />
                   <span className="text-sm text-gray-500 ml-3 dark:text-gray-400">
@@ -247,6 +291,9 @@ const Registration: React.FC = () => {
                     className="shrink-0 mt-0.5 border-gray-200 rounded-full text-blue-600 pointer-events-none focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:checked:bg-blue-500 dark:checked:border-blue-500 dark:focus:ring-offset-gray-800"
                     id="bkash"
                     value="bkash"
+                    defaultChecked={
+                      singleData.data?.paymentMethod === "bkash" ? true : false
+                    }
                     {...register("paymentMethod")}
                   />
                   <span className="text-sm text-gray-500 ml-3 dark:text-gray-400">
@@ -262,6 +309,7 @@ const Registration: React.FC = () => {
                   <input
                     type="text"
                     className="md:py-3 md:px-4 py-2 px-3 block  w-full border border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400"
+                    defaultValue={singleData.data?.bkashNumber}
                     {...register("bkashNumber")}
                   />
                 </div>
@@ -272,6 +320,7 @@ const Registration: React.FC = () => {
                 </label>
                 <textarea
                   className="py-3 px-4 min-h-[100px] block w-full border border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400"
+                  defaultValue={singleData.data?.note}
                   {...register("note")}
                 ></textarea>
               </div>
@@ -298,4 +347,4 @@ const Registration: React.FC = () => {
   );
 };
 
-export default Registration;
+export default UpdateRegistration;

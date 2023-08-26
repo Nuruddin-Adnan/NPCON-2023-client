@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { useSignupMutation } from "../../redux/features/auth/authApi";
@@ -46,7 +46,10 @@ export default function Signup() {
       const response = await signMutation(data);
 
       if ("error" in response) {
-        errorNotify(response.error.data.message);
+        if (response.error && "data" in response.error) {
+          const errorData = response.error.data as { message: string }; // Adjust the type accordingly
+          errorNotify(errorData.message);
+        }
       } else {
         successNotify("Signup successfully"!);
         reset();

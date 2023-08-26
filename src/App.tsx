@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import MainLayout from "./layouts/MainLaout";
+import MainLayout from "./layouts/MainLayout";
 import { useAppDispatch } from "./redux/hook";
 import { setAccessToken, setUser } from "./redux/features/auth/authSlice";
 

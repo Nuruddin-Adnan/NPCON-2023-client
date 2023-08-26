@@ -1,4 +1,4 @@
-import React from "react";
+// import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAdminLoginMutation } from "../../../redux/features/auth/authApi";
 import { useAppDispatch } from "../../../redux/hook";
@@ -45,7 +45,10 @@ export default function AdminLogin() {
     const response = await adminLoginMutatin(data);
 
     if ("error" in response) {
-      errorNotify(response.error.data.message);
+      if (response.error && "data" in response.error) {
+        const errorData = response.error.data as { message: string }; // Adjust the type accordingly
+        errorNotify(errorData.message);
+      }
     } else {
       const data = response.data.data;
       const accessToken = data.accessToken;

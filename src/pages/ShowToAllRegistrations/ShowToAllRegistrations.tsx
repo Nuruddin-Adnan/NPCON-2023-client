@@ -1,4 +1,4 @@
-import React from "react";
+// import React from "react";
 import { useGetShowToAllRegistrationsQuery } from "../../redux/features/registration/registrationApi";
 import Table from "../../components/Table";
 
@@ -30,7 +30,7 @@ export default function ShowToAllRegistrations() {
   return (
     <section>
       <div>
-        <Table theader={theader} data={data.data}></Table>
+        <Table theader={theader} data={data.data} action={false}></Table>
       </div>
     </section>
   );

@@ -1,4 +1,4 @@
-import React from "react";
+// import React from "react";
 import { createBrowserRouter } from "react-router-dom";
 import App from "../App";
 import Home from "../pages/Home/Home";
@@ -10,6 +10,8 @@ import MyEntries from "../pages/MyEntries/MyEntries";
 import PrivateRoute from "./PrivateRoute";
 import AdminLogin from "../pages/Admin/Login/AdminLogin";
 import ShowToAllRegistrations from "../pages/ShowToAllRegistrations/ShowToAllRegistrations";
+import UpdateRegistration from "../pages/UpdateRegistration/UpdateRegistration";
+import Dashboard from "../pages/Admin/Dashboard/Dashboard";
 
 const routes = createBrowserRouter([
   {
@@ -29,6 +31,14 @@ const routes = createBrowserRouter([
         ),
       },
       {
+        path: `/registration/update/:id`,
+        element: (
+          <PrivateRoute>
+            <UpdateRegistration />
+          </PrivateRoute>
+        ),
+      },
+      {
         path: "/my-entries",
         element: (
           <PrivateRoute>
@@ -43,6 +53,16 @@ const routes = createBrowserRouter([
             <ShowToAllRegistrations />
           </PrivateRoute>
         ),
+      },
+    ],
+  },
+  {
+    path: "/admin/dashboard",
+    element: <Dashboard />,
+    children: [
+      {
+        index: true,
+        element: <Home />,
       },
     ],
   },

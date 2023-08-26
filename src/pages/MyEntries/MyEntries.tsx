@@ -1,4 +1,4 @@
-import React from "react";
+// import React from "react";
 import { useGetMyRegistrationsQuery } from "../../redux/features/registration/registrationApi";
 import Table from "../../components/Table";
 
@@ -27,7 +27,7 @@ export default function MyEntries() {
   return (
     <section>
       <div>
-        <Table theader={theader} data={data.data}></Table>
+        <Table theader={theader} data={data.data} action={true}></Table>
       </div>
     </section>
   );

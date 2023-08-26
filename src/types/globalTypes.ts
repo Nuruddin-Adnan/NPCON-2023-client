@@ -1,10 +1,11 @@
 export type IRegistration = {
+  _id?: string;
   name: string;
   designation: string;
   hospital: string;
   emailAddress: string;
   phoneNumber: string;
-  amount: number | number;
+  amount: number | string;
   purpose: string[];
   slideSeminar?: string;
   conference?: string;
@@ -14,4 +15,5 @@ export type IRegistration = {
   updatedBy?: string;
   note?: string;
   status?: string;
+  createdAt: Date;
 };

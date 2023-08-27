@@ -74,7 +74,7 @@ const Table: React.FC<TableProps> = ({ theader, data, action }) => {
               </div>
               {/* <!-- End Header --> */}
               {/* Printable area start */}
-              <div ref={componentRef}>
+              <div ref={componentRef} className="print:my-8 print:mx-6">
                 {/* <!-- Table --> */}
                 <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                   <thead className="bg-gray-50 divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
@@ -118,8 +118,7 @@ const Table: React.FC<TableProps> = ({ theader, data, action }) => {
                           <td className="h-px w-auto">
                             <div className="px-6">
                               <span className="text-sm text-gray-800 dark:text-gray-200 print:text-black">
-                                {/* {registration?.hospital || "N/A"} */}
-                                {registration?.hospital || ""}
+                                {registration?.hospital || "N/A"}
                               </span>
                             </div>
                           </td>

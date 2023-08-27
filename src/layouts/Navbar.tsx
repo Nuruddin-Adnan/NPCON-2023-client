@@ -109,6 +109,18 @@ export default function Navbar() {
                   </NavLink>
                 )}
 
+              {user &&
+                (user.role! === "rent_collector" ||
+                  user.role! === "admin" ||
+                  user.role! === "general_user") && (
+                  <NavLink
+                    className="font-medium text-gray-500 hover:text-gray-400 md:py-6 dark:text-gray-400 dark:hover:text-gray-500"
+                    to="/pre-registered"
+                  >
+                    Pre-registered-format
+                  </NavLink>
+                )}
+
               <NavLink
                 className="font-medium text-gray-500 hover:text-gray-400 md:py-6 dark:text-gray-400 dark:hover:text-gray-500"
                 to="#"
@@ -163,7 +175,7 @@ export default function Navbar() {
                     {user && user.role! === "admin" && (
                       <Link
                         className="flex items-center gap-x-3.5 py-2 px-3 rounded-md text-sm text-gray-800 hover:bg-gray-100 focus:ring-2 focus:ring-blue-500 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300"
-                        to="/dashboard"
+                        to="/admin/dashboard"
                       >
                         <svg
                           className="flex-none"

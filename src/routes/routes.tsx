@@ -12,6 +12,7 @@ import AdminLogin from "../pages/Admin/Login/AdminLogin";
 import ShowToAllRegistrations from "../pages/ShowToAllRegistrations/ShowToAllRegistrations";
 import UpdateRegistration from "../pages/UpdateRegistration/UpdateRegistration";
 import Dashboard from "../pages/Admin/Dashboard/Dashboard";
+import PreRegistered from "../pages/PreRegistered/PreRegistered";
 
 const routes = createBrowserRouter([
   {
@@ -51,6 +52,14 @@ const routes = createBrowserRouter([
         element: (
           <PrivateRoute>
             <ShowToAllRegistrations />
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "/pre-registered",
+        element: (
+          <PrivateRoute>
+            <PreRegistered />
           </PrivateRoute>
         ),
       },

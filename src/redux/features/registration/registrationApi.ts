@@ -4,12 +4,15 @@ const registrationApi = api.injectEndpoints({
   endpoints: (builder) => ({
     getMyRegistrations: builder.query({
       query: () => `/registrations/my-registrations`,
+      providesTags: ["registrations"],
     }),
     getShowToAllRegistrations: builder.query({
       query: () => `/registrations/show-to-all`,
+      providesTags: ["registrations"],
     }),
     getSingleRegistration: builder.query({
       query: (id) => `/registrations/${id}`,
+      providesTags: ["registrations"],
     }),
     createRegistration: builder.mutation({
       query: (data) => ({
@@ -24,6 +27,7 @@ const registrationApi = api.injectEndpoints({
         method: "PATCH",
         body: data,
       }),
+      invalidatesTags: ["registrations"],
     }),
   }),
 });

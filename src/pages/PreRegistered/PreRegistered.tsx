@@ -17,22 +17,10 @@ export default function PreRegistered() {
     return <div>Error:</div>;
   }
 
-  const theader = [
-    "Sl. No.",
-    "Name",
-    "Designation",
-    "Slide Seminar",
-    "Conference",
-  ];
-
   return (
     <section>
       <div>
-        <PreRegisteredTable
-          theader={theader}
-          data={data.data}
-          action={true}
-        ></PreRegisteredTable>
+        <PreRegisteredTable data={data.data}></PreRegisteredTable>
       </div>
     </section>
   );
